@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>@minggoral</title>
+<link ref="icon" type="image/png" href="assets/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+--red-primary: #e74c3c;
+--red-glow: rgba(231,76,60,0.8);
+--red-light: #ffb3b3;
+--dark-bg: #0a0a0a;
+--card-bg: rgba(20,20,20,0.95);
+}
+*{margin:0;padding:0;box-sizing:border-box;user-select:none}
+body{
+font-family:'Inter',sans-serif;
+background:var(--dark-bg);
+color:#fff;
+overflow:hidden;
+position:relative;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+#particles{
+position:fixed;top:0;left:0;width:100%;height:100%;
+pointer-events:none;z-index:1;
+}
+.particle{
+position:absolute;width:4px;height:4px;
+background:var(--red-primary);border-radius:50%;
+box-shadow:0 0 6px var(--red-primary),0 0 10px var(--red-primary);
+opacity:0;
+animation:float 12s linear infinite;
+}
+@keyframes float{
+0%{transform:translate(0,0) scale(0);opacity:0}
+20%{transform:translate(-30px,-50px) scale(1);opacity:.8}
+50%{transform:translate(40px,-100px) scale(1.2);opacity:.6}
+80%{transform:translate(-20px,-150px) scale(.8);opacity:.4}
+100%{transform:translate(0,-200px) scale(0);opacity:0}
+}
+.door-container, .open-button {
+display: none !important;
+}
+#dynamic-island-container {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%) scale(1);
+z-index: 1100;
+cursor: pointer;
+transition: all 0.6s cubic-bezier(0.77,0,0.175,1);
+display: flex;
+justify-content: center;
+align-items: center;
+width: 60px;
+height: 60px;
+background: transparent;
+border-radius: 50%;
+box-shadow: 0 0 20px rgba(231,76,60,0.5), inset 0 0 0 2px var(--red-glow);
+}
+#dynamic-island-container:not(.opened):hover {
+transform: translate(-50%, -50%) scale(1.05);
+box-shadow: 0 0 40px rgba(231,76,60,0.8), inset 0 0 0 2px var(--red-primary);
+}
+#dynamic-island-container.opened {
+top: 12px;
+width: 280px;
+height: 40px;
+transform: translate(-50%, 0);
+border-radius: 8px;
+background: rgba(20,20,20,0.95);
+box-shadow: 0 0 15px rgba(231,76,60,0.3);
+border: 2px solid var(--red-glow);
+}
+
+.island-panel {
+position: absolute;
+background: transparent;
+border: none;
+border-radius: 50%;
+width: 100%;
+height: 100%;
+transition: all 0.6s cubic-bezier(0.77,0,0.175,1);
+display: none;
+align-items: center;
+justify-content: center;
+overflow: hidden;
+}
+
+#dynamic-island-container.opened .island-panel {
+display: flex;
+background: transparent;
+border: none;
+border-radius: 8px;
+}
+
+#power-icon {
+color: var(--red-primary);
+font-size: 2rem;
+transition: all 0.3s ease;
+position: absolute;
+}
+#dynamic-island-container.opened #power-icon {
+font-size: 1.5rem;
+left: 10px;
+position: absolute;
+}
+
+#dynamic-island-text {
+font-family: Consolas, monospace;
+color: var(--red-light);
+font-size: 1rem;
+text-align: center;
+opacity: 0;
+visibility: hidden;
+position: absolute;
+padding: 0 15px;
+transition: opacity 0.3s 0.2s, visibility 0.3s 0.2s;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+left: 50%;
+transform: translateX(-50%);
+}
+
+#dynamic-island-container.opened #dynamic-island-text {
+opacity: 1;
+visibility: visible;
+left: 50%;
+transform: translateX(-50%);
+padding-left: 55px;
+text-align: left;
+}
+#initial-text {
+display: none;
+}
+.profile-container{
+margin-top: 80px;
+width:95%;max-width:520px;
+z-index:100;
+opacity:0;visibility:hidden;
+display:flex;justify-content:center;align-items:center;
+transition:opacity .4s ease;
+}
+.profile-container.show{
+opacity:1;
+visibility:visible;
+transform:translateY(0);
+}
+.profile-card{
+background:var(--card-bg);
+border:2px solid var(--red-glow);
+border-radius:18px;
+padding:28px 24px;
+box-shadow:0 0 20px rgba(231,76,60,0.3);
+backdrop-filter:blur(10px);
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:12px;
+width:100%;
+transition:all .3s ease;
+}
+.profile-card:hover{
+box-shadow:0 0 40px rgba(231,76,60,0.5);
+transform:translateY(-4px);
+}
+.profile-header{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.profile-avatar{
+width:100px;height:100px;
+border-radius:50%;
+border:2px solid var(--red-primary);
+display:flex;align-items:center;justify-content:center;
+font-size:2rem;color:var(--red-light);
+background:linear-gradient(145deg,#3d1010,#1a1a1a);
+box-shadow:0 0 25px rgba(231,76,60,0.4);
+transition:all .3s ease;
+}
+.profile-avatar:hover{transform:scale(1.08);box-shadow:0 0 35px rgba(231,76,60,0.6)}
+.profile-name{
+font-size:1.5rem;font-weight:700;
+background:linear-gradient(45deg,#ff7066,var(--red-light));
+background-clip:text;
+-webkit-background-clip:text;
+color:transparent;
+-webkit-text-fill-color:transparent;
+text-shadow:0 0 15px rgba(231,76,60,0.4);
+transition:transform .3s ease;
+}
+.profile-name:hover{transform:scale(1.05)}
+.profile-title{
+font-size:1rem;
+color:#ff8a80;
+letter-spacing:.5px;
+margin-bottom:6px;
+}
+.profile-info{
+width:100%;
+display:flex;flex-direction:column;align-items:center;
+gap:8px;
+padding-top:4px;
+max-height:none;
+}
+.info-item{
+width:95%;
+padding:8px 10px;
+background:rgba(0,0,0,0.55);
+border-left:2px solid var(--red-primary);
+border-radius:8px;
+transition:all .25s ease;
+cursor:pointer;
+display:flex;flex-direction:column;align-items:flex-start;
+}
+.info-item:hover{transform:translateY(-2px);box-shadow:0 0 10px rgba(231,76,60,0.25)}
+.info-label{color:#ff8a80;font-weight:600;font-size:.85rem;margin-bottom:2px}
+.info-value{color:#fff;font-size:.88rem;filter:blur(5px);transition:filter .5s,color .5s;width:100%}
+.info-value.revealed{filter:blur(0);color:var(--red-light);text-shadow:0 0 6px rgba(231,76,60,.4)}
+.social-links{
+display:flex;
+justify-content:center;
+gap:12px;
+margin-top:12px;
+flex-wrap:wrap;
+}
+.social-link{
+width:38px;height:38px;
+border:2px solid var(--red-glow);
+border-radius:50%;
+display:flex;align-items:center;justify-content:center;
+color:var(--red-primary);font-weight:600;font-size:.9rem;
+text-decoration:none;
+transition:all .3s ease;
+}
+.social-link:hover{
+background:var(--red-primary);
+color:#fff;
+transform:translateY(-3px);
+box-shadow:0 0 15px rgba(231,76,60,0.4);
+}
+@media(max-width:480px){
+.profile-avatar{width:80px;height:80px;font-size:1.6rem}
+.profile-name{font-size:1.2rem}
+.profile-title{font-size:.85rem}
+.info-item{padding:6px 8px;font-size:.82rem}
+.social-link{width:32px;height:32px;font-size:.8rem}
+#dynamic-island-container.opened{
+width:230px;
+height:35px;
+}
+#dynamic-island-container.opened #power-icon {
+font-size: 1.3rem;
+left: 8px;
+}
+#dynamic-island-container.opened #dynamic-island-text {
+padding-left: 45px;
+}
+.profile-container{margin-top:70px;}
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+<div id="particles"></div>
+<div id="dynamic-island-container" onclick="toggleProfile()">
+<i class="fas fa-power-off" id="power-icon"></i> <div class="island-panel left"></div>
+<div class="island-panel right"></div>
+<div id="dynamic-island-text"></div>
+</div>
+<div class="profile-container" id="profileContainer">
+<div class="profile-card">
+<div class="profile-header">
+<div class="profile-avatar">🫠</div>
+<h1 class="profile-name">Minh ( @minggoral )</h1>
+<p class="profile-title">Lớp 11</p>
+</div>
+<div class="profile-info">
+<div class="info-item"><div class="info-label">Email</div><div class="info-value">FlockleDajyuu@gmail.com</div></div>
+<div class="info-item"><div class="info-label">Điện thoại</div><div class="info-value">Hidden</div></div>
+<div class="info-item"><div class="info-label">Kỹ năng</div><div class="info-value">Hidden</div></div>
+<div class="info-item"><div class="info-label">Sở thích</div><div class="info-value">Truyện chữ, tranh, v.v</div></div>
+</div>
+<div class="social-links">
+<a href="https://github.com/FlockleDajyuu" class="social-link" target="_blank">git</a>
+</div>
+</div>
+</div>
+<script>
+let isProfileOpen = false;
+let datetimeInterval;
+function createParticles(){
+const c=document.getElementById('particles');
+for(let i=0;i<30;i++){
+const p=document.createElement('div');
+p.className='particle';
+p.style.left=Math.random()*window.innerWidth+'px';
+p.style.top=Math.random()*window.innerHeight+'px';
+p.style.animationDelay=Math.random()*6+'s';
+p.style.animationDuration=(10+Math.random()*10)+'s';
+c.appendChild(p);
+}}
+function revealInfo(shouldReveal){
+document.querySelectorAll('.info-value').forEach(value => {
+if (shouldReveal) {
+value.classList.add('revealed');
+} else {
+value.classList.remove('revealed');
+}
+});
+}
+function updateDateTime(){
+const dtText=document.getElementById('dynamic-island-text');
+if (isProfileOpen) {
+const now=new Date();
+dtText.textContent=now.toLocaleTimeString('vi-VN',{hour12:false}) + ' ' + now.toLocaleDateString('vi-VN');
+}
+}
+function toggleProfile(){
+const diContainer=document.getElementById('dynamic-island-container');
+const profileContainer=document.getElementById('profileContainer');
+const dtText=document.getElementById('dynamic-island-text');
+if (!isProfileOpen) {
+diContainer.classList.add('opened');
+dtText.style.opacity = '0';
+dtText.style.visibility = 'hidden';
+setTimeout(()=>profileContainer.classList.add('show'),200);
+setTimeout(() => {
+updateDateTime();
+dtText.style.opacity = '1';
+dtText.style.visibility = 'visible';
+datetimeInterval = setInterval(updateDateTime, 1000);
+}, 600);
+revealInfo(true);
+isProfileOpen=true;
+} else {
+diContainer.classList.remove('opened');
+profileContainer.classList.remove('show');
+dtText.style.opacity = '0';
+dtText.style.visibility = 'hidden';
+clearInterval(datetimeInterval);
+revealInfo(false);
+isProfileOpen=false;
+}
+}
+document.querySelectorAll('.info-item').forEach(item => {
+const value=item.querySelector('.info-value');
+item.addEventListener('mouseenter',()=>{value.classList.add('revealed')},{once:true});
+});
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
+if(/^F\d+$/.test(e.key)||e.ctrlKey||e.altKey||e.metaKey)e.preventDefault();
+});
+Object.defineProperty(document,'referrer',{get:()=>''});
+Object.defineProperty(document,'URL',{get:()=>location.origin});
+window.addEventListener('load',()=>{
+createParticles();
+});
+</script>
+</body>
+</html>
